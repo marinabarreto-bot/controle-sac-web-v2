@@ -19,7 +19,7 @@ creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 
 client = gspread.authorize(creds)
 
-sheet = client.open("tb_Fedex").sheet1
+sheet = client.open("Rastreio_Fedex").sheet1
 
 
 @app.route("/")
