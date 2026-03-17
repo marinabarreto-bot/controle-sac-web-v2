@@ -25,7 +25,7 @@ else:
         creds_dict = json.loads(creds_json)
         creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
         client = gspread.authorize(creds)
-        sheet = client.open_by_key("1lzSvtyA80WYnUy5_VEK1cu3CfuS8pioH").sheet1
+        sheet = client.open_by_key("1lzSvtyA80WYnUy5_VEK1cu3CfuS8pioH").worksheet("DADOS_FEDEX")
         print("Google Sheets conectado com sucesso")
     except Exception as e:
         print("ERRO AO CONECTAR:", str(e))
