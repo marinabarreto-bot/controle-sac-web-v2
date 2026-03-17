@@ -46,6 +46,7 @@ def index():
 @app.route("/buscar", methods=["POST"])
 def buscar():
 
+    print(linha)
     awb = request.form["awb"]
 
     dados = sheet.get_all_records()
