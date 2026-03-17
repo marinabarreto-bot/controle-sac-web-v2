@@ -45,24 +45,29 @@ def index():
 
 @app.route("/buscar", methods=["POST"])
 def buscar():
+    try:
+        awb = request.form["awb"]
 
-    print(linha)
-    awb = request.form["awb"]
+        dados = sheet.get_all_records()
 
-    dados = sheet.get_all_records()
+        print("DADOS:", dados[:2])  # DEBUG
 
-    for i, linha in enumerate(dados):
+        for linha in dados:
+            print("LINHA:", linha)  # DEBUG
 
-        if str(linha["AWB"]) == awb:
+            if str(linha.get("AWB")) == awb:
+                return jsonify({
+                    "pedido": linha.get("Pedido"),
+                    "data_saida": linha.get("DATA_SAIDA"),
+                    "destino": linha.get("DESTINATARIO"),
+                    "status": linha.get("STATUS")
+                })
 
-            return jsonify({
-                "pedido": linha["Pedido"],
-                "data_saida": linha["DATA_SAIDA"],
-                "destino": linha["DESTINATARIO"],
-                "status": linha["STATUS"]
-            })
+        return jsonify({"erro": "AWB não encontrado"})
 
-    return jsonify({"erro": "AWB não encontrado"})
+    except Exception as e:
+        print("ERRO:", str(e))
+        return jsonify({"erro": str(e)})
 
 
 @app.route("/salvar", methods=["POST"])
