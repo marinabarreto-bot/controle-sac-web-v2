@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Global Shipment Control</title>
+
+<style>
+
+body{
+background:#1e1e2f;
+font-family:Arial;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+}
+
+.panel{
+
+width:500px;
+background:#2a2a40;
+padding:30px;
+border-radius:8px;
+box-shadow:0 0 20px rgba(0,0,0,0.4);
+
+}
+
+h1{
+margin:0;
+font-size:22px;
+}
+
+.subtitle{
+color:#aaa;
+font-size:13px;
+margin-bottom:25px;
+}
+
+.section{
+margin-top:20px;
+}
+
+.label{
+font-size:12px;
+color:#aaa;
+margin-bottom:5px;
+}
+
+input, textarea{
+
+width:100%;
+padding:10px;
+border:none;
+border-radius:4px;
+background:#1e1e2f;
+color:white;
+
+}
+
+textarea{
+height:80px;
+resize:none;
+}
+
+button{
+
+margin-top:10px;
+padding:12px;
+border:none;
+border-radius:4px;
+background:#4caf50;
+color:white;
+font-weight:bold;
+cursor:pointer;
+width:100%;
+
+}
+
+.searchbtn{
+background:#1976d2;
+}
+
+.grid{
+
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px;
+margin-top:15px;
+
+}
+
+.info{
+
+background:#1e1e2f;
+padding:10px;
+border-radius:4px;
+font-size:14px;
+
+}
+
+.status{
+color:#ffd54f;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="panel">
+
+<h1>GLOBAL SHIPMENT CONTROL</h1>
+<div class="subtitle">Export Operations Panel</div>
+
+<div class="section">
+
+<div class="label">AWB SEARCH</div>
+
+<input type="text" id="awb">
+
+<button class="searchbtn" onclick="buscar()">SEARCH</button>
+
+</div>
+
+<div class="section">
+
+<div class="label">SHIPMENT DETAILS</div>
+
+<div class="grid">
+
+<div class="info">Order<br><b id="pedido">-</b></div>
+
+<div class="info">Ship Date<br><b id="data">-</b></div>
+
+<div class="info">Destination<br><b id="destino">-</b></div>
+
+<div class="info">Status<br><span class="status" id="status">-</span></div>
+
+</div>
+
+</div>
+
+<div class="section">
+
+<div class="label">SAC COMMENT</div>
+
+<textarea id="comentario"></textarea>
+
+<button onclick="salvar()">UPDATE SHIPMENT NOTE</button>
+
+</div>
+
+</div>
+
+<script>
+
+function buscar(){
+
+let awb=document.getElementById("awb").value
+
+fetch("/buscar",{
+method:"POST",
+headers:{"Content-Type":"application/x-www-form-urlencoded"},
+body:"awb="+awb
+})
+
+.then(r=>r.json())
+.then(d=>{
+
+if(d.erro){
+alert(d.erro)
+return
+}
+
+document.getElementById("pedido").innerText=d.pedido
+document.getElementById("data").innerText=d.data_saida
+document.getElementById("status").innerText=d.status
+document.getElementById("destino").innerText=d.destino
+
+})
+
+}
+
+function salvar(){
+
+let awb=document.getElementById("awb").value
+let comentario=document.getElementById("comentario").value
+
+fetch("/salvar",{
+method:"POST",
+headers:{"Content-Type":"application/x-www-form-urlencoded"},
+body:"awb="+awb+"&comentario="+comentario
+})
+
+.then(r=>r.text())
+.then(()=>alert("Comentário salvo"))
+
+}
+
+</script>
+
+</body>
+</html>
