@@ -11,15 +11,31 @@ scope = [
 
 import os
 import json
+import os
+import json
 
-creds_dict = json.loads(os.environ["GOOGLE_CREDENTIALS"])
+creds_json = os.environ.get("GOOGLE_CREDENTIALS")
+
+if not creds_json:
+    print("ERRO: GOOGLE_CREDENTIALS não encontrada")
+    creds_dict = None
+else:
+    creds_dict = json.loads(creds_json)
+
+if creds_dict:
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+    client = gspread.authorize(creds)
+    sheet = client.open_by_key("1lzSvtyA80WYnUy5_VEK1cu3CfuS8pioH").sheet1
+else:
+    sheet = None
+
 
 creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
 
 
 client = gspread.authorize(creds)
 
-sheet = client.open("Rastreio_Fedex").sheet1
+sheet = client.open_by_key("1lzSvtyA80WYnUy5_VEK1cu3CfuS8pioH").sheet1
 
 
 @app.route("/")
