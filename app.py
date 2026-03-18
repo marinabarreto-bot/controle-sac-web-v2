@@ -86,10 +86,20 @@ def salvar():
         awb = request.form["awb"]
         comentario = request.form["comentario"]
 
-        cell = sheet.find(awb)
-        sheet.update_cell(cell.row, 14, comentario)
+        dados = sheet.get_all_records()
 
-        return "OK"
+        for i, linha in enumerate(dados, start=2):  # começa na linha 2
+            if str(linha.get("AWB")) == str(awb):
+
+                # Descobre a coluna automaticamente
+                headers = sheet.row_values(1)
+                col_index = headers.index("Comentário SAC") + 1
+
+                sheet.update_cell(i, col_index, comentario)
+
+                return "OK"
+
+        return "AWB não encontrado"
 
     except Exception as e:
         print("ERRO SALVAR:", str(e))
