@@ -111,25 +111,6 @@ font-weight:bold;
 
 <body>
 
-<div class="panel">
-
-<h1>GLOBAL SHIPMENT CONTROL</h1>
-<div class="subtitle">Export Operations Panel</div>
-
-<div class="section">
-
-<div class="label">AWB SEARCH</div>
-
-<input type="text" id="awb">
-
-<button class="searchbtn" onclick="buscar()">SEARCH</button>
-
-</div>
-
-<div class="section">
-
-<div class="label">SHIPMENT DETAILS</div>
-
 <div class="grid">
 
 <div class="info">Order<br><b id="pedido">-</b></div>
@@ -139,6 +120,8 @@ font-weight:bold;
 <div class="info">Destination<br><b id="destino">-</b></div>
 
 <div class="info">Status<br><span class="status" id="status">-</span></div>
+
+<div class="info">COMEX Comment<br><b id="comentario_comex">-</b></div>
 
 </div>
 
@@ -180,6 +163,7 @@ document.getElementById("pedido").innerText=d.pedido
 document.getElementById("data").innerText=d.data_saida
 document.getElementById("status").innerText=d.status
 document.getElementById("destino").innerText=d.destino
+document.getElementById("comentario_comex").innerText = d.comentario_comex || "-"
 
 })
 

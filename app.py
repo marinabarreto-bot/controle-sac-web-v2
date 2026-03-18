@@ -66,7 +66,8 @@ def buscar():
                     "pedido": linha.get("Pedido"),
                     "data_saida": linha.get("DATA_SAIDA"),
                     "destino": linha.get("DESTINATARIO"),
-                    "status": linha.get("STATUS")
+                    "status": linha.get("STATUS"),
+                    "comentario_comex": linha.get("Comentário COMEX")
                 })
 
         return jsonify({"erro": "AWB não encontrado"})
