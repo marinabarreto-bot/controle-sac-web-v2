@@ -1,13 +1,14 @@
 from flask import Flask, render_template, request, jsonify
 import gspread
-from oauth2client.service_account import ServiceAccountCredentials
+from google.oauth2.service_account import Credentials
 import os
 import json
 
 app = Flask(__name__)
 
+# Escopos corretos
 scope = [
-    "https://spreadsheets.google.com/feeds",
+    "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive"
 ]
 
@@ -15,20 +16,28 @@ scope = [
 # CONEXÃO COM GOOGLE SHEETS
 # =========================
 
+sheet = None
+
 creds_json = os.environ.get("GOOGLE_CREDENTIALS")
 
 if not creds_json:
     print("ERRO: GOOGLE_CREDENTIALS não encontrada")
-    sheet = None
 else:
     try:
         creds_dict = json.loads(creds_json)
-        creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+
+        creds = Credentials.from_service_account_info(creds_dict, scopes=scope)
         client = gspread.authorize(creds)
-        sheet = client.open_by_key("1lzSvtyA80WYnUy5_VEK1cu3CfuS8pioH").worksheet("DADOS_FEDEX")
-        print("Google Sheets conectado com sucesso")
+
+        planilha = client.open_by_key("1KBhkkY2Ma2WJ4_dSmIzE8tvClmBQMwuMkD-P0oXaKVE")
+        sheet = planilha.get_worksheet(0)
+
+        print("✅ Google Sheets conectado com sucesso")
+
     except Exception as e:
-        print("ERRO AO CONECTAR:", str(e))
+        import traceback
+        print("❌ ERRO AO CONECTAR:")
+        traceback.print_exc()
         sheet = None
 
 
@@ -44,23 +53,15 @@ def index():
 @app.route("/buscar", methods=["POST"])
 def buscar():
     try:
-        print("INICIO BUSCAR")
-
         if not sheet:
-            print("ERRO: sheet None")
             return jsonify({"erro": "Sem conexão com planilha"})
 
         awb = request.form.get("awb")
-        print("AWB recebido:", awb)
 
         dados = sheet.get_all_records()
-        print("TOTAL LINHAS:", len(dados))
 
         for linha in dados:
-            print("LINHA:", linha)
-
             if str(linha.get("AWB")) == str(awb):
-                print("ENCONTROU AWB")
                 return jsonify({
                     "pedido": linha.get("Pedido"),
                     "data_saida": linha.get("DATA_SAIDA"),
@@ -68,14 +69,13 @@ def buscar():
                     "status": linha.get("STATUS")
                 })
 
-        print("AWB NÃO ENCONTRADO")
         return jsonify({"erro": "AWB não encontrado"})
 
     except Exception as e:
         import traceback
-        print("ERRO COMPLETO:")
         traceback.print_exc()
         return jsonify({"erro": str(e)})
+
 
 @app.route("/salvar", methods=["POST"])
 def salvar():
