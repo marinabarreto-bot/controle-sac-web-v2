@@ -153,6 +153,15 @@ background:#4caf50;
 
 <textarea id="comentario"></textarea>
 
+<div class="label" style="margin-top:15px;">
+Houve reembolso para o cliente?
+</div>
+
+<div style="display:flex; gap:20px; margin-top:5px;">
+<label><input type="radio" name="reembolso" value="Sim"> Sim</label>
+<label><input type="radio" name="reembolso" value="Não"> Não</label>
+</div>
+
 <button class="updatebtn" onclick="salvar()">UPDATE SHIPMENT NOTE</button>
 
 </div>
@@ -194,16 +203,21 @@ function salvar(){
 let awb=document.getElementById("awb").value
 let comentario=document.getElementById("comentario").value
 
+let reembolso = document.querySelector('input[name="reembolso"]:checked')
+reembolso = reembolso ? reembolso.value : ""
+
 fetch("/salvar",{
 method:"POST",
 headers:{"Content-Type":"application/x-www-form-urlencoded"},
-body:"awb="+awb+"&comentario="+comentario
+body:"awb="+awb+"&comentario="+comentario+"&reembolso="+reembolso
 })
 
 .then(r=>r.text())
 .then(()=>alert("Comentário salvo"))
 
 }
+
+</script>
 
 function limpar(){
 

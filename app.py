@@ -86,17 +86,20 @@ def salvar():
 
         awb = request.form["awb"]
         comentario = request.form["comentario"]
+        reembolso = request.form.get("reembolso")
 
         dados = sheet.get_all_records()
 
         for i, linha in enumerate(dados, start=2):  # começa na linha 2
             if str(linha.get("AWB")) == str(awb):
 
-                # Descobre a coluna automaticamente
                 headers = sheet.row_values(1)
-                col_index = headers.index("Comentário SAC") + 1
 
-                sheet.update_cell(i, col_index, comentario)
+                col_comentario = headers.index("Comentário SAC") + 1
+                col_reembolso = 16  # coluna P
+
+                sheet.update_cell(i, col_comentario, comentario)
+                sheet.update_cell(i, col_reembolso, reembolso)
 
                 return "OK"
 
